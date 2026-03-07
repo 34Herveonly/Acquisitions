@@ -1,0 +1,4 @@
+{"level":"error","message":"Signup Error","service":"Acquisitions-api"}
+{"level":"error","message":"Error creating the user:Error: Failed query: insert into \"users\" (\"id\", \"name\", \"email\", \"password\", \"role\", \"created_at\", \"updated_at\") values (default, $1, $2, $3, $4, default, default) returning \"id\", \"name\", \"email\", \"role\", \"created_at\"\nparams: Adrian Rabiot,adrian@jsgmail.com,$2b$10$YLG4PsG.ggHVOzOHhcI.JO9LWGcIvbWNPzOOi4ghkkIJtK/BnroBG,user","service":"Acquisitions-api"}
+{"level":"error","message":"Signup Error","service":"Acquisitions-api"}
+{"level":"error","message":"Signup Error","service":"Acquisitions-api"}
