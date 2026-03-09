@@ -2,7 +2,7 @@ import logger from '#config/logger.js';
 import { createUser, authenticateUser } from '#services/auth.service.js';
 import { signupSchema, signinSchema } from '#validations/auth.validation.js';
 import { formatValidationError } from '../utils/format.js';
-import jwt from 'jsonwebtoken';
+import { jwttoken } from '../utils/jwt.js';
 
 export const signup = async (req, res, next) => {
   try {
@@ -19,10 +19,11 @@ export const signup = async (req, res, next) => {
 
     const user = await createUser({ name, email, password, role });
 
-    const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
-      process.env.JWT_SECRET
-    );
+    const token = jwttoken.sign({
+      id: user.id,
+      email: user.email,
+      role: user.role
+    });
 
     res.cookie('token', token, { httpOnly: true });
 
@@ -64,10 +65,11 @@ export const signin = async (req, res, next) => {
 
     const user = await authenticateUser(email, password);
 
-    const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
-      process.env.JWT_SECRET
-    );
+    const token = jwttoken.sign({
+      id: user.id,
+      email: user.email,
+      role: user.role
+    });
 
     res.cookie('token', token, { httpOnly: true });
 

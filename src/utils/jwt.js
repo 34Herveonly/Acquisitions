@@ -2,8 +2,14 @@
 import logger from '#config/logger.js';
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-please-change-in-production' ;
-const JWT_EXPIRES_IN = '1d';
+// Validate JWT_SECRET is properly configured
+if (!process.env.JWT_SECRET) {
+  logger.error('JWT_SECRET environment variable is required but not set');
+  throw new Error('JWT_SECRET environment variable is required');
+}
+
+const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_EXPIRES_IN = '7d'; // Consistent with auth controller
 
 export const jwttoken = {
   sign:(payload)=> {

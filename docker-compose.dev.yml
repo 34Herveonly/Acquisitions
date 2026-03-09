@@ -1,0 +1,89 @@
+services:
+  # Neon Local proxy service
+  neon-local:
+    image: neondatabase/neon_local:latest
+    container_name: neon-local
+    ports:
+      - "5432:5432"
+    environment:
+      NEON_API_KEY: napi_oq8424jm693y8gpkensx4tacl46lgnr2oxlainsm4j5crdtsn7al7tg3id65p9gd
+      NEON_PROJECT_ID: twilight-hall-87257425
+      PARENT_BRANCH_ID: br-flat-fog-ae7mrvrh
+      DRIVER: serverless
+    env_file:
+      - .env.development
+    volumes:
+      # Persist database data and Git metadata for branch tracking
+      - ./.neon_local:/tmp/.neon_local
+      - ./.git/HEAD:/tmp/.git/HEAD:ro
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep -f envoy && pgrep -f pgbouncer || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 45s
+
+  # Application service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: acquisitions-dev
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    env_file:
+      - .env.development
+    command: ["/bin/sh", "./scripts/docker-entrypoint.sh"]
+    volumes:
+      # Mount source code for hot reloading
+      - ./src:/app/src:ro
+      - ./package.json:/app/package.json:ro
+      - ./package-lock.json:/app/package-lock.json:ro
+      - ./drizzle:/app/drizzle:ro
+      - ./drizzle.config.js:/app/drizzle.config.js:ro
+      # Mount logs directory
+      - ./logs:/app/logs
+    depends_on:
+      neon-local:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # Optional: Drizzle Studio for database management
+  drizzle-studio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: drizzle-studio-dev
+    ports:
+      - "4983:4983"
+    environment:
+      - NODE_ENV=development
+    env_file:
+      - .env.development
+    command: ["npm", "run", "db:studio"]
+    depends_on:
+      neon-local:
+        condition: service_healthy
+      app:
+        condition: service_started
+    networks:
+      - app-network
+    restart: unless-stopped
+    profiles:
+      - tools
+
+volumes:
+  neon_local_data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
