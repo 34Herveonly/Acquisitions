@@ -10,3 +10,6 @@
 {"level":"error","message":"Signup Error","service":"Acquisitions-api"}
 {"level":"error","message":"Error creating the user:Error: User already exists","service":"Acquisitions-api"}
 {"level":"error","message":"Signup Error","service":"Acquisitions-api"}
+{"level":"error","service":"Acquisitions-api"}
+{"level":"error","service":"Acquisitions-api"}
+{"level":"error","service":"Acquisitions-api"}
