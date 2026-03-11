@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Acquisitions Test Suite" tests="6" failures="0" errors="0" time="7.97">
+  <testsuite name="API Endpoints" errors="0" failures="0" skipped="0" timestamp="2026-03-11T14:28:47" time="6.365" tests="3">
+    <testcase classname="API Endpoints GET /health should return health status" name="API Endpoints GET /health should return health status" time="0.238">
+    </testcase>
+    <testcase classname="API Endpoints GET /api should return API message" name="API Endpoints GET /api should return API message" time="0.016">
+    </testcase>
+    <testcase classname="API Endpoints GET /nonexistent should return 404 for non-existent routes" name="API Endpoints GET /nonexistent should return 404 for non-existent routes" time="0.017">
+    </testcase>
+  </testsuite>
+  <testsuite name="Security Middleware" errors="0" failures="0" skipped="0" timestamp="2026-03-11T14:28:47" time="6.695" tests="3">
+    <testcase classname="Security Middleware Test Environment Behavior should skip Arcjet protection in test environment" name="Security Middleware Test Environment Behavior should skip Arcjet protection in test environment" time="0.269">
+    </testcase>
+    <testcase classname="Security Middleware Test Environment Behavior should handle requests without IP addresses gracefully" name="Security Middleware Test Environment Behavior should handle requests without IP addresses gracefully" time="0.037">
+    </testcase>
+    <testcase classname="Security Middleware Error Handling should handle malformed requests without crashing" name="Security Middleware Error Handling should handle malformed requests without crashing" time="0.074">
+    </testcase>
+  </testsuite>
+</testsuites>

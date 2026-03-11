@@ -1,0 +1,177 @@
+name: Tests
+
+on:
+  push:
+    branches: [main, staging]
+  pull_request:
+    branches: [main, staging]
+
+env:
+  NODE_ENV: test
+  NODE_OPTIONS: --experimental-vm-modules
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: acquisitions_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          NODE_ENV: development
+
+      - name: Wait for PostgreSQL
+        run: |
+          until pg_isready -h localhost -p 5432 -U postgres; do
+            echo "Waiting for PostgreSQL..."
+            sleep 2
+          done
+
+      - name: Run tests with coverage
+        id: test
+        run: npm test
+        env:
+          NODE_ENV: test
+          NODE_OPTIONS: --experimental-vm-modules
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/acquisitions_test
+          LOG_LEVEL: error
+        continue-on-error: true
+
+      - name: Generate test report
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: Jest Tests
+          path: coverage/test-results.json
+          reporter: jest-junit
+          fail-on-error: true
+
+      - name: Upload coverage to Codecov
+        if: always()
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+
+      - name: Upload coverage artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-${{ github.run_number }}
+          path: |
+            coverage/
+            !coverage/tmp
+          retention-days: 30
+
+      - name: Generate coverage summary
+        if: always()
+        run: |
+          echo "## 📊 Test Coverage Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ -f "coverage/coverage-summary.json" ]; then
+            COVERAGE=$(node -pe "
+              const fs = require('fs');
+              const coverage = JSON.parse(fs.readFileSync('coverage/coverage-summary.json', 'utf8'));
+              const total = coverage.total;
+              \`| Metric | Coverage | Status |
+              |--------|----------|--------|
+              | Lines | \${total.lines.pct}% | \${total.lines.pct >= 80 ? '✅' : '❌'} |
+              | Functions | \${total.functions.pct}% | \${total.functions.pct >= 80 ? '✅' : '❌'} |
+              | Branches | \${total.branches.pct}% | \${total.branches.pct >= 80 ? '✅' : '❌'} |
+              | Statements | \${total.statements.pct}% | \${total.statements.pct >= 80 ? '✅' : '❌'} |\`
+            ")
+            echo "$COVERAGE" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Coverage report not found." >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📁 [View detailed coverage report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+
+      - name: Annotate test failures
+        if: failure() && steps.test.conclusion == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            // Check if test results file exists
+            if (fs.existsSync('coverage/test-results.json')) {
+              const testResults = JSON.parse(fs.readFileSync('coverage/test-results.json', 'utf8'));
+              
+              if (testResults.testResults) {
+                let failureMessage = '## ❌ Test Failures\n\n';
+                
+                testResults.testResults.forEach(testFile => {
+                  if (testFile.status === 'failed') {
+                    failureMessage += `### ${testFile.name}\n`;
+                    
+                    testFile.assertionResults.forEach(test => {
+                      if (test.status === 'failed') {
+                        failureMessage += `- ❌ **${test.fullName}**\n`;
+                        if (test.failureMessages && test.failureMessages.length > 0) {
+                          failureMessage += `  \`\`\`\n  ${test.failureMessages[0]}\n  \`\`\`\n`;
+                        }
+                      }
+                    });
+                  }
+                });
+                
+                if (context.eventName === 'pull_request') {
+                  github.rest.issues.createComment({
+                    issue_number: context.issue.number,
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    body: failureMessage
+                  });
+                }
+              }
+            }
+
+      - name: Fail on test failures
+        if: steps.test.conclusion == 'failure'
+        run: |
+          echo "❌ Tests failed!"
+          echo "Please check the test output above and fix the failing tests."
+          exit 1
+
+      - name: Success message
+        if: success()
+        run: |
+          echo "✅ All tests passed!"
+          echo "Coverage report uploaded as artifact and available for 30 days."

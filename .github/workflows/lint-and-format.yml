@@ -1,0 +1,100 @@
+name: Lint and Format
+
+on:
+  push:
+    branches: [main, staging]
+  pull_request:
+    branches: [main, staging]
+
+jobs:
+  lint-and-format:
+    name: ESLint & Prettier Check
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          NODE_ENV: development
+
+      - name: Cache ESLint
+        uses: actions/cache@v4
+        with:
+          path: .eslintcache
+          key: ${{ runner.os }}-eslint-${{ hashFiles('**/eslint.config.js', '**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-eslint-
+
+      - name: Run ESLint
+        id: eslint
+        run: |
+          npm run lint -- --format=@eslint/eslintrc --cache --cache-location .eslintcache --output-file eslint-results.json --format json || echo "eslint_failed=true" >> $GITHUB_OUTPUT
+          npm run lint -- --format=compact
+        continue-on-error: true
+
+      - name: Annotate ESLint Results
+        if: failure() && steps.eslint.outputs.eslint_failed == 'true'
+        uses: ataylorme/eslint-annotate-action@v3
+        with:
+          repo-token: '${{ secrets.GITHUB_TOKEN }}'
+          report-json: 'eslint-results.json'
+
+      - name: Run Prettier Check
+        id: prettier
+        run: |
+          npm run format:check || echo "prettier_failed=true" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      - name: Comment PR with formatting issues
+        if: failure() && github.event_name == 'pull_request' && steps.prettier.outputs.prettier_failed == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 💅 Code Formatting Issues Found
+              
+              Your code has formatting issues. Please run the following commands to fix them:
+              
+              \`\`\`bash
+              npm run format
+              \`\`\`
+              
+              Or to fix both linting and formatting issues:
+              
+              \`\`\`bash
+              npm run lint:fix
+              npm run format
+              \`\`\`
+              `
+            })
+
+      - name: Fail on issues
+        if: steps.eslint.outputs.eslint_failed == 'true' || steps.prettier.outputs.prettier_failed == 'true'
+        run: |
+          echo "❌ Code quality checks failed!"
+          echo "Please fix the linting and formatting issues above."
+          echo "Run 'npm run lint:fix' and 'npm run format' to fix issues automatically."
+          exit 1
+
+      - name: Success message
+        if: success()
+        run: echo "✅ All linting and formatting checks passed!"
