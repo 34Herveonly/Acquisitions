@@ -4,6 +4,12 @@ import { slidingWindow } from '@arcjet/node';
 
 const securityMiddleWare = async (req, res, next) => {
   try {
+    // Skip Arcjet protection in test environment
+    if (process.env.NODE_ENV === 'test') {
+      logger.debug('Skipping Arcjet protection in test environment');
+      return next();
+    }
+
     const role = req.user?.role || 'guest';
 
     let limit;
@@ -32,14 +38,27 @@ const securityMiddleWare = async (req, res, next) => {
 
     const client = aj.withRule(
       slidingWindow({
-        mode: 'LIVE',
+        mode: process.env.NODE_ENV === 'test' ? 'DRY_RUN' : 'LIVE',
         interval: '1m',
         max: limit,
         name: `${role}-rate-limit`,
       })
     );
 
-    const decision = await client.protect(req);
+    // Ensure we have a valid IP for Arcjet fingerprinting
+    const clientIP =
+      req.ip ||
+      req.connection?.remoteAddress ||
+      req.socket?.remoteAddress ||
+      '127.0.0.1';
+
+    // Create a request object with guaranteed IP
+    const requestWithIP = {
+      ...req,
+      ip: clientIP,
+    };
+
+    const decision = await client.protect(requestWithIP);
 
     // Bot protection
     if (decision.isDenied() && decision.reason.isBot()) {
