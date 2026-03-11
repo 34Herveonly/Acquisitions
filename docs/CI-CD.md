@@ -5,6 +5,7 @@ This project implements a comprehensive CI/CD pipeline using GitHub Actions with
 ## 🔄 Workflows Overview
 
 ### 1. **Lint and Format** (`lint-and-format.yml`)
+
 - **Triggers:** Push/PR to `main` and `staging` branches
 - **Purpose:** Code quality assurance through ESLint and Prettier
 - **Features:**
@@ -15,6 +16,7 @@ This project implements a comprehensive CI/CD pipeline using GitHub Actions with
   - Clear error annotations
 
 ### 2. **Tests** (`tests.yml`)
+
 - **Triggers:** Push/PR to `main` and `staging` branches
 - **Purpose:** Automated testing with coverage reporting
 - **Features:**
@@ -26,6 +28,7 @@ This project implements a comprehensive CI/CD pipeline using GitHub Actions with
   - Test failure annotations
 
 ### 3. **Docker Build and Push** (`docker-build-and-push.yml`)
+
 - **Triggers:** Push to `main` branch, manual workflow dispatch
 - **Purpose:** Multi-platform Docker image builds
 - **Features:**
@@ -40,9 +43,9 @@ This project implements a comprehensive CI/CD pipeline using GitHub Actions with
 
 Configure these secrets in your GitHub repository settings:
 
-| Secret Name | Description | Example |
-|-------------|-------------|---------|
-| `DOCKER_USERNAME` | Docker Hub username | `your-dockerhub-username` |
+| Secret Name       | Description             | Example                     |
+| ----------------- | ----------------------- | --------------------------- |
+| `DOCKER_USERNAME` | Docker Hub username     | `your-dockerhub-username`   |
 | `DOCKER_PASSWORD` | Docker Hub access token | `dckr_pat_1234567890abcdef` |
 
 ### Setting up Docker Hub Secrets:
@@ -57,17 +60,20 @@ Configure these secrets in your GitHub repository settings:
 ## 📊 Coverage and Reports
 
 ### Test Coverage
+
 - **Minimum Threshold:** 80% (recommended)
 - **Reports:** HTML, LCOV, JSON, Clover formats
 - **Artifacts:** Coverage reports retained for 30 days
 - **Integration:** Codecov for historical tracking
 
 ### Code Quality
+
 - **ESLint:** Enforces code style and best practices
 - **Prettier:** Ensures consistent code formatting
 - **Caching:** ESLint cache persisted between runs
 
 ### Security
+
 - **Trivy:** Container vulnerability scanning
 - **Docker Scout:** Additional security analysis
 - **SARIF:** Results uploaded to GitHub Security tab
@@ -117,11 +123,13 @@ You can manually trigger the Docker build workflow:
 ## 🔧 Maintenance
 
 ### Updating Dependencies
+
 - Use Dependabot or regularly update GitHub Actions versions
 - Test workflow changes in feature branches
 - Monitor for deprecated actions or Node.js versions
 
 ### Monitoring
+
 - Check GitHub Actions usage quotas
 - Monitor Docker Hub rate limits
 - Review security scan results regularly

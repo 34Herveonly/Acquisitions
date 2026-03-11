@@ -19,7 +19,7 @@ jobs:
   build-and-push:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
-    
+
     permissions:
       contents: read
       packages: write
@@ -100,7 +100,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Published Images" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           # Extract and display tags
           TAGS="${{ steps.meta.outputs.tags }}"
           echo "$TAGS" | while IFS= read -r tag; do
@@ -108,7 +108,7 @@ jobs:
               echo "- \`$tag\`" >> $GITHUB_STEP_SUMMARY
             fi
           done
-          
+
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Pull Command" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -140,7 +140,7 @@ jobs:
           script: |
             const { owner, repo } = context.repo;
             const sha = context.sha;
-            
+
             // Create deployment
             const deployment = await github.rest.repos.createDeployment({
               owner,
@@ -151,7 +151,7 @@ jobs:
               auto_merge: false,
               required_contexts: []
             });
-            
+
             // Update deployment status
             await github.rest.repos.createDeploymentStatus({
               owner,
@@ -167,7 +167,7 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     if: success()
-    
+
     permissions:
       contents: read
       security-events: write

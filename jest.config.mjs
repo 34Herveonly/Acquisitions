@@ -25,7 +25,7 @@ const config = {
     'src/**/*.{js,mjs}',
     '!src/**/*.test.{js,mjs}',
     '!src/**/*.spec.{js,mjs}',
-    '!src/**/index.js'
+    '!src/**/index.js',
   ],
 
   // The directory where Jest should output its coverage files
@@ -40,13 +40,7 @@ const config = {
   coverageProvider: 'v8',
 
   // A list of reporter names that Jest uses when writing coverage reports
-  coverageReporters: [
-    'json-summary',
-    'text',
-    'lcov',
-    'clover',
-    'html'
-  ],
+  coverageReporters: ['json-summary', 'text', 'lcov', 'clover', 'html'],
 
   // An object that configures minimum threshold enforcement for coverage results
   // coverageThreshold: undefined,
@@ -117,11 +111,14 @@ const config = {
   // Use this configuration option to add custom reporters to Jest
   reporters: [
     'default',
-    ['jest-junit', {
-      outputDirectory: 'coverage',
-      outputName: 'test-results.xml',
-      suiteName: 'Acquisitions Test Suite'
-    }]
+    [
+      'jest-junit',
+      {
+        outputDirectory: 'coverage',
+        outputName: 'test-results.xml',
+        suiteName: 'Acquisitions Test Suite',
+      },
+    ],
   ],
 
   // Automatically reset mock state before every test
