@@ -5,6 +5,7 @@ This guide explains how to run the Acquisitions application using Docker with Ne
 ## Overview
 
 The application supports two database configurations:
+
 - **Development**: Uses Neon Local via Docker for local development
 - **Production**: Uses Neon Cloud Database for production deployment
 
@@ -19,31 +20,37 @@ The application supports two database configurations:
 ### Quick Start
 
 1. **Clone and setup**:
+
 ```bash
 git clone <your-repo-url>
 cd acquisitions
 ```
 
 2. **Start the development environment**:
+
 ```bash
 docker-compose -f docker-compose.dev.yml up --build
 ```
 
 This will:
+
 - Build the application Docker image
 - Start Neon Local proxy (PostgreSQL-compatible)
 - Start the application with hot reloading
 - Create automatic database branches for development
 
 3. **Access the application**:
+
 - App: http://localhost:3000
 - API: http://localhost:3000/api
 - Health Check: http://localhost:3000/health
 
 4. **Optional: Start Drizzle Studio** (for database management):
+
 ```bash
 docker-compose -f docker-compose.dev.yml --profile tools up drizzle-studio
 ```
+
 - Drizzle Studio: http://localhost:4983
 
 ### Development Features
@@ -57,6 +64,7 @@ docker-compose -f docker-compose.dev.yml --profile tools up drizzle-studio
 ### Development Configuration
 
 The development setup uses `.env.development`:
+
 ```env
 PORT=3000
 NODE_ENV=development
@@ -69,6 +77,7 @@ DEBUG_MODE=true
 ### Database Migrations (Development)
 
 Run database migrations in development:
+
 ```bash
 # Run migrations
 docker-compose -f docker-compose.dev.yml exec app npm run db:migrate
@@ -87,6 +96,7 @@ docker-compose -f docker-compose.dev.yml exec app npm run db:generate
 
 2. **Configure production environment**:
    Update `.env.production` with your actual values:
+
 ```env
 PORT=3000
 NODE_ENV=production
@@ -99,21 +109,25 @@ DEBUG_MODE=false
 ### Deployment Options
 
 #### Option 1: Basic Production Deployment
+
 ```bash
 docker-compose -f docker-compose.prod.yml up -d --build
 ```
 
 #### Option 2: With Nginx Reverse Proxy
+
 ```bash
 docker-compose -f docker-compose.prod.yml --profile proxy up -d --build
 ```
 
 #### Option 3: With Monitoring
+
 ```bash
 docker-compose -f docker-compose.prod.yml --profile monitoring up -d --build
 ```
 
 #### Option 4: Full Production Stack
+
 ```bash
 docker-compose -f docker-compose.prod.yml --profile proxy --profile monitoring up -d --build
 ```
@@ -130,6 +144,7 @@ docker-compose -f docker-compose.prod.yml --profile proxy --profile monitoring u
 ### Production Environment Variables
 
 You can override default ports and settings:
+
 ```bash
 # Custom ports
 export APP_PORT=8080
@@ -151,14 +166,17 @@ The application automatically detects the environment and uses the appropriate d
 
 ```javascript
 // Automatic detection based on NODE_ENV and DATABASE_URL
-const isNeonLocal = process.env.NODE_ENV === 'development' && 
-  process.env.DATABASE_URL && 
-  (process.env.DATABASE_URL.includes('neon-local') || process.env.DATABASE_URL.includes('localhost'));
+const isNeonLocal =
+  process.env.NODE_ENV === 'development' &&
+  process.env.DATABASE_URL &&
+  (process.env.DATABASE_URL.includes('neon-local') ||
+    process.env.DATABASE_URL.includes('localhost'));
 ```
 
 ## Useful Commands
 
 ### Development
+
 ```bash
 # Start development environment
 docker-compose -f docker-compose.dev.yml up -d
@@ -177,6 +195,7 @@ docker-compose -f docker-compose.dev.yml exec app sh
 ```
 
 ### Production
+
 ```bash
 # Deploy production
 docker-compose -f docker-compose.prod.yml up -d --build
@@ -192,6 +211,7 @@ docker-compose -f docker-compose.prod.yml down
 ```
 
 ### Database Management
+
 ```bash
 # Run migrations (development)
 docker-compose -f docker-compose.dev.yml exec app npm run db:migrate
@@ -223,6 +243,7 @@ docker-compose -f docker-compose.dev.yml --profile tools up drizzle-studio
 ### Development Issues
 
 1. **Neon Local connection failed**:
+
 ```bash
 # Check if Neon Local is running
 docker-compose -f docker-compose.dev.yml ps neon-local
@@ -264,12 +285,14 @@ docker-compose -f docker-compose.dev.yml logs neon-local
 ## Neon Database Features
 
 ### Development (Neon Local)
+
 - Local PostgreSQL-compatible database
 - Automatic branch creation for testing
 - No internet connection required
 - Full SQL compatibility
 
 ### Production (Neon Cloud)
+
 - Serverless PostgreSQL
 - Automatic scaling
 - Branching and point-in-time recovery

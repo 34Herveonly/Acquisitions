@@ -4,7 +4,7 @@ services:
     image: neondatabase/neon_local:latest
     container_name: neon-local
     ports:
-      - "5432:5432"
+      - '5432:5432'
     environment:
       NEON_API_KEY: napi_oq8424jm693y8gpkensx4tacl46lgnr2oxlainsm4j5crdtsn7al7tg3id65p9gd
       NEON_PROJECT_ID: twilight-hall-87257425
@@ -19,7 +19,7 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD-SHELL", "pgrep -f envoy && pgrep -f pgbouncer || exit 1"]
+      test: ['CMD-SHELL', 'pgrep -f envoy && pgrep -f pgbouncer || exit 1']
       interval: 15s
       timeout: 10s
       retries: 3
@@ -33,12 +33,12 @@ services:
       target: development
     container_name: acquisitions-dev
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - NODE_ENV=development
     env_file:
       - .env.development
-    command: ["/bin/sh", "./scripts/docker-entrypoint.sh"]
+    command: ['/bin/sh', './scripts/docker-entrypoint.sh']
     volumes:
       # Mount source code for hot reloading
       - ./src:/app/src:ro
@@ -63,12 +63,12 @@ services:
       target: development
     container_name: drizzle-studio-dev
     ports:
-      - "4983:4983"
+      - '4983:4983'
     environment:
       - NODE_ENV=development
     env_file:
       - .env.development
-    command: ["npm", "run", "db:studio"]
+    command: ['npm', 'run', 'db:studio']
     depends_on:
       neon-local:
         condition: service_healthy

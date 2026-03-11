@@ -11,7 +11,7 @@ export const signup = async (req, res, next) => {
     if (!validationResult.success) {
       return res.status(400).json({
         error: 'Validation failed',
-        details: formatValidationError(validationResult.error)
+        details: formatValidationError(validationResult.error),
       });
     }
 
@@ -22,7 +22,7 @@ export const signup = async (req, res, next) => {
     const token = jwttoken.sign({
       id: user.id,
       email: user.email,
-      role: user.role
+      role: user.role,
     });
 
     res.cookie('token', token, { httpOnly: true });
@@ -35,10 +35,9 @@ export const signup = async (req, res, next) => {
         id: user.id,
         name: user.name,
         email: user.email,
-        role: user.role
-      }
+        role: user.role,
+      },
     });
-
   } catch (e) {
     logger.error('Signup Error');
 
@@ -57,7 +56,7 @@ export const signin = async (req, res, next) => {
     if (!validationResult.success) {
       return res.status(400).json({
         error: 'Validation failed',
-        details: formatValidationError(validationResult.error)
+        details: formatValidationError(validationResult.error),
       });
     }
 
@@ -68,7 +67,7 @@ export const signin = async (req, res, next) => {
     const token = jwttoken.sign({
       id: user.id,
       email: user.email,
-      role: user.role
+      role: user.role,
     });
 
     res.cookie('token', token, { httpOnly: true });
@@ -81,10 +80,9 @@ export const signin = async (req, res, next) => {
         id: user.id,
         name: user.name,
         email: user.email,
-        role: user.role
-      }
+        role: user.role,
+      },
     });
-
   } catch (e) {
     logger.error('Signin Error');
 
@@ -103,9 +101,8 @@ export const signout = async (req, res, next) => {
     logger.info('User signed out successfully');
 
     res.status(200).json({
-      message: 'User signed out successfully'
+      message: 'User signed out successfully',
     });
-
   } catch (e) {
     logger.error('Signout Error');
     next(e);
