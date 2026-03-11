@@ -94,3 +94,26 @@
 {"level":"info","message":"::ffff:172.18.0.1 - - [10/Mar/2026:17:00:17 +0000] \"GET /api/users HTTP/1.1\" 500 832 \"-\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\"","service":"Acquisitions-api"}
 {"level":"info","message":"Getting users...","service":"Acquisitions-api"}
 {"level":"info","message":"::ffff:172.18.0.1 - - [10/Mar/2026:17:02:57 +0000] \"GET /api/users HTTP/1.1\" 200 367 \"-\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\"","service":"Acquisitions-api"}
+{"level":"info","message":"::ffff:172.18.0.1 - - [11/Mar/2026:11:52:06 +0000] \"POST / HTTP/1.1\" 404 140 \"-\" \"HTTPie\"","service":"Acquisitions-api"}
+{"level":"info","message":"Hello from the Acquisitions","service":"Acquisitions-api"}
+{"level":"info","message":"::ffff:172.18.0.1 - - [11/Mar/2026:11:52:12 +0000] \"GET / HTTP/1.1\" 200 23 \"-\" \"HTTPie\"","service":"Acquisitions-api"}
+{"level":"info","message":"Getting users...","service":"Acquisitions-api"}
+{"level":"info","message":"::ffff:172.18.0.1 - - [11/Mar/2026:11:52:23 +0000] \"GET /api/users HTTP/1.1\" 200 367 \"-\" \"HTTPie\"","service":"Acquisitions-api"}
+{"level":"info","message":"User registered successfully christian@hotumail.com","service":"Acquisitions-api"}
+{"level":"info","message":"::ffff:172.18.0.1 - - [11/Mar/2026:11:54:00 +0000] \"POST /api/auth/sign-up HTTP/1.1\" 201 120 \"-\" \"HTTPie\"","service":"Acquisitions-api"}
+{"level":"info","message":"Getting users...","service":"Acquisitions-api"}
+{"level":"info","message":"::ffff:172.18.0.1 - - [11/Mar/2026:11:54:15 +0000] \"GET /api/users HTTP/1.1\" 200 529 \"-\" \"HTTPie\"","service":"Acquisitions-api"}
+{"level":"info","message":"User signed in successfully christian@hotumail.com","service":"Acquisitions-api"}
+{"level":"info","message":"::ffff:172.18.0.1 - - [11/Mar/2026:11:54:58 +0000] \"POST /api/auth/sign-in HTTP/1.1\" 200 132 \"-\" \"HTTPie\"","service":"Acquisitions-api"}
+{"level":"info","message":"Getting user by id: 4","service":"Acquisitions-api"}
+{"level":"info","message":"::ffff:172.18.0.1 - - [11/Mar/2026:11:56:07 +0000] \"GET /api/users/4 HTTP/1.1\" 200 200 \"-\" \"HTTPie\"","service":"Acquisitions-api"}
+{"deletedBy":5,"level":"info","message":"Deleting user 4","service":"Acquisitions-api"}
+{"level":"info","message":"::ffff:172.18.0.1 - - [11/Mar/2026:11:57:45 +0000] \"DELETE /api/users/4 HTTP/1.1\" 200 205 \"-\" \"HTTPie\"","service":"Acquisitions-api"}
+{"level":"info","message":"Getting users...","service":"Acquisitions-api"}
+{"level":"info","message":"::ffff:172.18.0.1 - - [11/Mar/2026:11:58:10 +0000] \"GET /api/users/ HTTP/1.1\" 200 377 \"-\" \"HTTPie\"","service":"Acquisitions-api"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [11/Mar/2026:12:46:19 +0000] \"GET /health HTTP/1.1\" 200 75 \"-\" \"-\"","service":"Acquisitions-api"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [11/Mar/2026:12:46:20 +0000] \"GET /api HTTP/1.1\" 200 41 \"-\" \"-\"","service":"Acquisitions-api"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [11/Mar/2026:12:46:20 +0000] \"GET /nonexistent HTTP/1.1\" 404 27 \"-\" \"-\"","service":"Acquisitions-api"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [11/Mar/2026:12:56:06 +0000] \"GET /health HTTP/1.1\" 200 74 \"-\" \"-\"","service":"Acquisitions-api"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [11/Mar/2026:12:56:06 +0000] \"GET /api HTTP/1.1\" 200 41 \"-\" \"-\"","service":"Acquisitions-api"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [11/Mar/2026:12:56:06 +0000] \"GET /nonexistent HTTP/1.1\" 404 27 \"-\" \"-\"","service":"Acquisitions-api"}
